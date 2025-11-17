@@ -1,9 +1,7 @@
-import { use, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from 'react'
 import './App.css'
-import { BrowserRouter, Router, Routes } from "react-router-dom";
-import RepoCard from "./components/RepoCard";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import RepoCard from "./components/RepoCard";
 import RepoList from "./components/RepoList";
 import SearchBar from "./components/SearchBar";
 import RepoDetail from "./components/RepoDetail";
@@ -17,16 +15,25 @@ export default function App() {
 
   const fetchRepo = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
+      setError("");
+
+      console.log("Fetching repo with username ", { username });
 
       const res = await fetch(`https://api.github.com/users/${username}/repos`);
-      if (!res.ok) throw new Error("User not found");
+
+      if (!res.ok) {
+        throw new Error("User not found");
+      }
 
       const data = await res.json();
+
+      console.log("Json data of the api", { data });
+
       setRepos(data);
     }
     catch (err) {
-      setError(err);
+      setError(err.message);
       setRepos([]);
     }
     finally { setLoading(false); }
@@ -48,7 +55,7 @@ export default function App() {
             </div>
           }>
         </Route>
-        <Route path="/repo/:id" element={RepoDetail} />
+        <Route path="/repo/:id" element={<RepoDetail />} />
       </Routes>
     </BrowserRouter >
   );
